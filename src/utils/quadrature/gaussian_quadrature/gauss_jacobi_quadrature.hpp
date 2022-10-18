@@ -17,7 +17,7 @@ class jacobi_quad<T, linalg::blas_backend>
     using RT = typename linalg::get_real_type<T>::type;
 public:
     template <typename F> 
-    static auto impl(F&& f, RT a, RT b, RT alpha, RT beta, const linalg::vector<RT, linalg::blas_backend>& w, const linalg::vector<RT, linalg::blas_backend>& x) -> decltype(f(a))
+    static auto impl(F&& f, RT a, RT b, RT /* alpha */, RT /* beta */, const linalg::vector<RT, linalg::blas_backend>& w, const linalg::vector<RT, linalg::blas_backend>& x) -> decltype(f(a))
     {
         RT c = (b-a)/2.0;
         RT d = (b+a)/2.0;

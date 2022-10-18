@@ -17,7 +17,7 @@ public:
     virtual void apply(std::shared_ptr<superoperator::superoperator<complex_type>> /* S */, const truncated_occupation_number_basis& /* index */, const std::vector<complex_type>& /* nuk */, const std::vector<size_t>& /* nt */, size_t /* iado */, linalg::matrix<complex_type>& /* M */) {}
     virtual bool constant_truncation() const {return true;}
 
-    virtual void apply(const superoperator::diagonal_operator_superoperator<complex_type>& S, linalg::matrix<complex_type>& M ){}
+    virtual void apply(const superoperator::diagonal_operator_superoperator<complex_type>& /* S */, linalg::matrix<complex_type>& /* M */ ){}
 };
 
 
@@ -114,7 +114,7 @@ public:
         m_Cum.resize(m_E.size(0), m_E.size(1));
     }
 
-    void apply(std::shared_ptr<superoperator::superoperator<complex_type>> S , const truncated_occupation_number_basis& index, const std::vector<complex_type>& nuk, const std::vector<size_t>& n, size_t iado, linalg::matrix<complex_type>& M) final
+    void apply(std::shared_ptr<superoperator::superoperator<complex_type>> S , const truncated_occupation_number_basis& /*index  */, const std::vector<complex_type>& nuk, const std::vector<size_t>& n, size_t /* iado */, linalg::matrix<complex_type>& M) final
     {
         try
         {

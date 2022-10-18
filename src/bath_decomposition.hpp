@@ -6,7 +6,7 @@ class bose_decomposition
 {
 public:
     bose_decomposition() : m_K(0) {}
-    bose_decomposition(size_t K, T beta) : m_K(K), m_beta(beta), m_initialised(false) {}
+    bose_decomposition(size_t K, T beta) : m_initialised(false), m_K(K), m_beta(beta) {}
     virtual ~bose_decomposition(){}
 
     const T& beta() const{return m_beta;}
@@ -37,7 +37,7 @@ public:
     {
         return 2*M_PI*(i+1)/(this->m_beta);
     }
-    T eta(size_t i) 
+    T eta(size_t /* i */) 
     {
         return 1.0;
     }
@@ -94,9 +94,9 @@ public:
         linalg::symmetric_tridiagonal_matrix<T> L(2*N, 2*N);  
         
         for(size_t i = 0; i < 2*N; ++i){L(i, i)= 0;}
-        for(size_t i=0; i < 2*N-1; ++i) 
+        for(int64_t i=0; i < static_cast<int64_t>(2*N)-1; ++i) 
         {
-            L(i, i+1) = v(i);
+            //L(i, i+1) = v(i);
             L(i+1, i) = v(i);
         }
 

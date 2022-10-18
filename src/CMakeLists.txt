@@ -1,5 +1,8 @@
 cmake_minimum_required (VERSION 3.0)
-project(vsc-heom LANGUAGES CXX)
+project(vsc-heom LANGUAGES C CXX)
+
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/ ${CMAKE_MODULE_PATH})
 
 option(USE_OPENMP "Compile with openmp" ON)
 
@@ -45,7 +48,7 @@ else()
             find_package(LLVM REQUIRED)
             find_package(Clang REQUIRED)
 
-            set(LINALG_LIBS ${LINALG_LIBS} ${LLVM_LIBRARIES} ${CLANG_LIBS} ${CLANG_CLANG_LIBS})
+            set(LINALG_LINALG ${LIBS_LIBS} ${LLVM_LIBRARIES} ${CLANG_LIBS})
             
 
             #if we are using clang then find threads
@@ -81,6 +84,8 @@ else()
     endif()
     set(COMPILER_SET TRUE INTERNAL BOOL "")
 endif()
+
+
 add_executable(heom_mol.x rate_theory/main.cpp)
 add_executable(heom_cavity.x rate_theory/main_cavity.cpp)
 add_executable(heom_cavity_loss.x rate_theory/main_cavity_loss.cpp)
@@ -191,26 +196,62 @@ else()
     set(USE_DEFAULT_FIND_BLAS ON)
 endif()
 
+#if we aren't dealing with one of the vendors we treat specially then we will just go ahead and use the default
+#findBLAS and findLAPACK calls
+if(USE_DEFAULT_FIND_BLAS)
+    find_package(BLAS)
+    find_package(LAPACK)
+
+    if(NOT BLAS_FOUND)
+        message("BLAS NOT FOUND")
+        set(BLAS_LIBRARIES "-lblas")
+message("libs ${BLAS_LIBRARIES}")
+    else()
+        message("BLAS FOUND")
+    endif()
+
+
+
+    if(NOT LAPACK_FOUND)
+        set(LAPACK_LIBRARIES "-llapack -lm")
+    endif()
+    set(LINALG_LIBS ${LINALG_LIBS} ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+
+    message("libs ${BLAS_LIBRARIES}")
+    message("libs ${LAPACK_LIBRARIES}")
+endif()
+
+
 
 target_include_directories(heom_mol_2d.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 target_include_directories(heom_mol_2d.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 target_link_libraries(heom_mol_2d.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_mol_2d.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 target_include_directories(heom_cavity_loss_2d.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 target_include_directories(heom_cavity_loss_2d.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 target_link_libraries(heom_cavity_loss_2d.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_cavity_loss_2d.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 target_include_directories(heom_mol.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 target_include_directories(heom_mol.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 target_link_libraries(heom_mol.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_mol.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 target_include_directories(heom_cavity.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 target_include_directories(heom_cavity.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 target_link_libraries(heom_cavity.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_cavity.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
  
 target_include_directories(heom_cavity_loss.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 target_include_directories(heom_cavity_loss.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 target_link_libraries(heom_cavity_loss.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_cavity_loss.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 
 #uncomment these to build the executables that use a thermalisation step to prepare the initial state
@@ -219,27 +260,39 @@ target_link_libraries(heom_cavity_loss.x linalg  ${LINALG_LIBS} ${LIBS})
 #target_include_directories(heom_mol_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 #target_include_directories(heom_mol_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 #target_link_libraries(heom_mol_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
+#install(TARGETS heom_mol_thermalise.x 
+#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 #target_include_directories(heom_cavity_loss_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 #target_include_directories(heom_cavity_loss_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 #target_link_libraries(heom_cavity_loss_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
+#install(TARGETS heom_cavity_loss_thermalise.x 
+#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 
 #uncomment these to build the executables that calculate the IR spectra
 #target_include_directories(heom_mol_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 #target_include_directories(heom_mol_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
-#target_link_libraries(heom_mol_irx linalg  ${LINALG_LIBS} ${LIBS}) 
+#target_link_libraries(heom_mol_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+#install(TARGETS heom_mol_ir.x 
+#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 #target_include_directories(heom_cavity_loss_2d_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 #target_include_directories(heom_cavity_loss_2d_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 #target_link_libraries(heom_cavity_loss_2d_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+#install(TARGETS heom_cavity_loss_2d_ir.x 
+#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 #target_include_directories(heom_mol_2d_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 #target_include_directories(heom_mol_2d_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 #target_link_libraries(heom_mol_2d_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+#install(TARGETS heom_mol_2d_ir.x 
+#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 #target_include_directories(heom_cavity_loss_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
 #target_include_directories(heom_cavity_loss_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
 #target_link_libraries(heom_cavity_loss_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+#install(TARGETS heom_cavity_loss_ir.x 
+#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 

@@ -20,7 +20,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
         endif()
     endif()
 endif()
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linalg/CMakeLists.txt" OR NOT EXISTS  "${PROJECT_SOURCE_DIR}/utils/CMakeLists.txt")
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/linalg/CMakeLists.txt")
     message(FATAL_ERROR "The submodules were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
 endif()
 

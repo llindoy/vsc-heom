@@ -135,7 +135,7 @@ public:
         CALL_AND_HANDLE(resize(n), "Failed to resize buffers.");
         for(size_t i=0; i<n; ++i)
         {
-            size_t k = i+1;
+            //size_t k = i+1;
             m_poly_recurrence(i, i) = alpha[i];
             if(i+1 < n)
             {

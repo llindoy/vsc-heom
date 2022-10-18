@@ -91,7 +91,7 @@ public:
         }
     }
 
-    void hamiltonian_operator(linalg::matrix<T>& op, T renorm = 0)
+    void hamiltonian_operator(linalg::matrix<T>& op, T /* renorm */ = 0)
     {
         op.resize(_nP, _nP);
         if(!m_diagonalise_position)
@@ -451,7 +451,7 @@ public:
     {
         try
         {
-            T from_eV = 1.0/27.2114;
+            //T from_eV = 1.0/27.2114;
             T from_cmn1 = 1.0/219474.63;
             ASSERT(obj.HasMember("nu_c"), "Required parameters are not present.");
             ASSERT(obj["nu_c"].IsNumber(), "Required parameters are not correctly specified.");

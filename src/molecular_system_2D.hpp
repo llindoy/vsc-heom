@@ -90,7 +90,7 @@ public:
         }
     }
 
-    void hamiltonian_operator(linalg::matrix<T>& op, T renorm = 0)
+    void hamiltonian_operator(linalg::matrix<T>& op, T /* renorm */ = 0)
     {
         op.resize(_nT, _nT);
         if(!m_diagonalise_position)
@@ -155,7 +155,7 @@ public:
         transform_operator(diag, op);
     }
 
-    void Q_operator(linalg::matrix<T>& op, T Rdisp=0)
+    void Q_operator(linalg::matrix<T>& op, T /* Rdisp */=0)
     {
         op.resize(_nT, _nT);
         op.fill_zeros();
@@ -347,7 +347,7 @@ public:
     {
         try
         {
-            T from_eV = 1.0/27.2114;
+            //T from_eV = 1.0/27.2114;
             T from_cmn1 = 1.0/219474.63;
             ASSERT(obj.HasMember("omega"), "Required parameters are not present.");
             ASSERT(obj["omega"].IsNumber(), "Required parameters are not correctly specified.");

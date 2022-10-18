@@ -74,21 +74,21 @@ public:
 
             //now we need to tranform the transformation matrix and the polaritonic Hamiltonian
             {
-                linalg::matrix<T> temp = linalg::trans(Ut)*m_U;
-                m_U = temp;
+                linalg::matrix<T> temp2 = linalg::trans(Ut)*m_U;
+                m_U = temp2;
             }
 
             //now set up the Hamiltonian in the new basis
             {
                 linalg::diagonal_matrix<T> Ev(m_E.size(),  m_E.size());
                 for(size_t i =0; i < m_E.size(); ++i){Ev(i, i) = m_E(i);}
-                linalg::matrix<T> temp = Ev*Ut;
-                m_Hpf = linalg::trans(Ut)*temp;
+                linalg::matrix<T> temp2 = Ev*Ut;
+                m_Hpf = linalg::trans(Ut)*temp2;
             }
         }
     }
 
-    void hamiltonian_operator(linalg::matrix<T>& op, T renorm = 0)
+    void hamiltonian_operator(linalg::matrix<T>& op, T /* renorm */ = 0)
     {
         op.resize(_nP, _nP);
         if(!m_diagonalise_position)
@@ -135,7 +135,7 @@ public:
         }
     }
 
-    void qc_operator(linalg::matrix<T>& op, T Rdisp=0)
+    void qc_operator(linalg::matrix<T>& op, T /*Rdisp*/=0)
     {
         op.resize(_nP, _nP);
         op.fill_zeros();
@@ -349,7 +349,7 @@ public:
     {
         try
         {
-            T from_eV = 1.0/27.2114;
+            //T from_eV = 1.0/27.2114;
             T from_cmn1 = 1.0/219474.63;
             ASSERT(obj.HasMember("nu_c"), "Required parameters are not present.");
             ASSERT(obj["nu_c"].IsNumber(), "Required parameters are not correctly specified.");

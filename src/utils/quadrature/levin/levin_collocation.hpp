@@ -29,7 +29,7 @@ public:
     levin_base() : m_p(0) {}
     levin_base(size_t p) : m_p(0)
     {       
-        CALL_AND_HANDLE(resize(p), "Failed to construct levin base object.");
+        CALL_AND_HANDLE(resize(p), "Failed to conclass levin base object.");
     }
 
     levin_base(const levin_base& o) = default;
@@ -94,7 +94,7 @@ public:
 
             std::array<std::array<result_type, Impl::nfuncs()>, Impl::nfuncs()> A;
 
-            //now construct the matrix that needs to be inverted.
+            //now conclass the matrix that needs to be inverted.
             for(size_t i=0; i<m_p; ++i)
             {
                 real_type x = m_zk(i)*d + e;
@@ -174,7 +174,9 @@ protected:
     linalg::vector<result_type> m_c;
 };
 
-
+//only include the Bessel function levin collocation if the C++ std lib that is included supports
+//the cylindrical bessel function.
+#if __cplusplus > 201703L
 template <typename T>
 class levin_bessel : public levin_base<levin_bessel<T> >
 {
@@ -192,7 +194,7 @@ public:
     catch(const std::exception& ex)
     {
         std::cerr << ex.what() << std::endl;
-        RAISE_EXCEPTION("Failed to construct levin_bessel object.");
+        RAISE_EXCEPTION("Failed to conclass levin_bessel object.");
     }
 
     levin_bessel(const levin_bessel& o) = default;
@@ -230,12 +232,14 @@ protected:
 };
 
 template <typename T>
-struct levin_traits<levin_bessel<T>>
+class levin_traits<levin_bessel<T>>
 {
+public:
     using result_type = T;
     using real_type = typename linalg::get_real_type<T>::type;
     using value_type = T;
 };
+#endif
 
 template <typename T>
 class levin_fourier : public levin_base<levin_fourier<T> >
@@ -247,8 +251,15 @@ public:
 
     using base_type = levin_base<levin_fourier<T>>;
     using base_type::operator=;
-    using base_type::levin_base;
+    using typename base_type::levin_base;
 public:
+    levin_fourier() : base_type(){}
+    levin_fourier(size_t p) : base_type(p){}
+    levin_fourier(const levin_fourier&) = default;
+    levin_fourier(levin_fourier&&) = default;
+
+    levin_fourier& operator=(const levin_fourier&) = default;
+    levin_fourier& operator=(levin_fourier&&) = default;
 
     static constexpr size_t nfuncs(){return 1;}
     result_type differential_matrix(size_t i, size_t j, real_type /*x*/, real_type r)
@@ -265,8 +276,9 @@ public:
 };
 
 template <typename T>
-struct levin_traits<levin_fourier<T>>
+class levin_traits<levin_fourier<T>>
 {
+public:
     using real_type = typename linalg::get_real_type<T>::type;
     using result_type = std::complex<real_type>;
     using value_type = T;
@@ -282,8 +294,15 @@ public:
 
     using base_type = levin_base<levin_sine<T>>;
     using base_type::operator=;
-    using base_type::levin_base;
+    using typename base_type::levin_base;
 public:
+    levin_sine() : base_type(){}
+    levin_sine(size_t p) : base_type(p){}
+    levin_sine(const levin_sine&) = default;
+    levin_sine(levin_sine&&) = default;
+
+    levin_sine& operator=(const levin_sine&) = default;
+    levin_sine& operator=(levin_sine&&) = default;
 
     static constexpr size_t nfuncs(){return 2;}
     result_type differential_matrix(size_t i, size_t j, real_type /*x*/, real_type r)
@@ -302,8 +321,9 @@ public:
 };
 
 template <typename T>
-struct levin_traits<levin_sine<T>>
+class levin_traits<levin_sine<T>>
 {
+public:
     using result_type = T;
     using real_type = typename linalg::get_real_type<T>::type;
     using value_type = T;
@@ -319,8 +339,15 @@ public:
 
     using base_type = levin_base<levin_cosine<T>>;
     using base_type::operator=;
-    using base_type::levin_base;
+    using typename base_type::levin_base;
 public:
+    levin_cosine() : base_type(){}
+    levin_cosine(size_t p) : base_type(p){}
+    levin_cosine(const levin_cosine&) = default;
+    levin_cosine(levin_cosine&&) = default;
+
+    levin_cosine& operator=(const levin_cosine&) = default;
+    levin_cosine& operator=(levin_cosine&&) = default;
 
     static constexpr size_t nfuncs(){return 2;}
     result_type differential_matrix(size_t i, size_t j, real_type /*x*/, real_type r)
@@ -339,8 +366,9 @@ public:
 };
 
 template <typename T>
-struct levin_traits<levin_cosine<T>>
+class levin_traits<levin_cosine<T>>
 {
+public:
     using result_type = T;
     using real_type = typename linalg::get_real_type<T>::type;
     using value_type = T;
