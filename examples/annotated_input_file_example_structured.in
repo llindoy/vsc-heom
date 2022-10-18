@@ -1,0 +1,51 @@
+{   
+    "c" : "Here I have only annotated the variables that have not been annotated in the cavity_loss example file.",
+    "use pade": true, 
+    "maxfactor": [
+        6, 
+        5
+    ], 
+    "dt": 0.5, 
+    "system": {
+        "nu_c": 1200, 
+        "c": 9.9999999999999995e-07,    "c" : "the C_Q parameter specifying the coupling between the spectactor and reaction coordinate modes.",
+        "nM": 24, 
+        "use_dvr": true, 
+        "nT": 24,                       "c" : "the number of 2D molecular states retained when forming the matter states in the polaritonic Hamiltonian.",
+        "pot": {
+            "type": "quartic", 
+            "wb": 1000, 
+            "Eb": 2250
+        }, 
+        "Rmax": 220, 
+        "nF": 100, 
+        "eta": 0.005, 
+        "mass": 1, 
+        "nP": 24, 
+        "nQ": 50,                       "c" : "the number of Q mode states included when forming the 2D molecular Hamiltonian states."
+        "nR": 1024, 
+        "omega": 1200, 
+        "Ep": 2500.0
+    }, 
+    "tol": 1e-08, 
+    "scalefactor": [
+        1.2, 
+        1
+    ], 
+    "Kc": 4, 
+    "wc": 200, 
+    "wb": 1000, 
+    "K": 3, 
+    "mode lifetime": 100,               "c" : "The lifetime of the additional vibrational mode.  This sets the reorganisation energy of the underdamped mode bath and here corresponds to setting the reorganisation energy to the value given in the SI of the paper.", 
+    "L": 20, 
+    "Km": 3,                            "c" : "The number of Matsubara or Pade states used for the underdamped mode bath.",
+    "cavity lifetime": 1000, 
+
+    "beta": 1052.8, 
+    "nequil": 1000, 
+    "alpha": 0.1, 
+    "gammam": 1000,                     "c" : "The cutoff frequency for the underdamped mode bath.",
+    "tmax": 100000, 
+    "use cutoff": true, 
+    "gammac": 1000
+}
