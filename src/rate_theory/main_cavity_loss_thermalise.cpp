@@ -359,7 +359,7 @@ int main(int argc, char* argv[])
 
             auto start = std::chrono::high_resolution_clock::now();
             
-            size_type nsteps = static_cast<size_t>(tmax/dt)+1;
+            //size_type nsteps = static_cast<size_t>(tmax/dt)+1;
 
             complex_type val = linalg::dot_product(linalg::conj(sidev), rhov);
             std::cout << "thermalising." << std::endl;

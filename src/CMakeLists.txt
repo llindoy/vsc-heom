@@ -5,6 +5,8 @@ get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTO
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules/ ${CMAKE_MODULE_PATH})
 
 option(USE_OPENMP "Compile with openmp" ON)
+option(BUILD_THERMALISE "Compile the executables that thermalise the ADO tensor before evaluating the correlation functions used in the evaluation of the rate constant." OFF)
+option(BUILD_IR "Compile the executables for evaluating the dipole-dipole correlation function" OFF)
 
 if(USE_OPENMP)
     add_compile_definitions(USE_OPENMP)
@@ -92,17 +94,22 @@ add_executable(heom_cavity_loss.x rate_theory/main_cavity_loss.cpp)
 add_executable(heom_mol_2d.x rate_theory/main_2d.cpp)
 add_executable(heom_cavity_loss_2d.x rate_theory/main_cavity_loss_2d.cpp)
 
-#uncomment these to build the executables that use a thermalisation step to prepare the initial state
-#before performing the production HEOM calculations
-#add_executable(heom_cavity_loss_thermalise.x rate_theory/main_cavity_loss_thermalise.cpp)
-#add_executable(heom_mol_thermalise.x rate_theory/main_thermalise.cpp)
+if(BUILD_THERMALISE)
+add_executable(heom_cavity_loss_thermalise.x rate_theory/main_cavity_loss_thermalise.cpp)
+add_executable(heom_mol_thermalise.x rate_theory/main_thermalise.cpp)
+endif()
 
+if(BUILD_IR)
+add_executable(heom_mol_ir.x ir_spectrum/main_ir.cpp)
+add_executable(heom_cavity_loss_ir.x ir_spectrum/main_cavity_loss_ir.cpp)
+add_executable(heom_mol_2d_ir.x ir_spectrum/main_2d_ir.cpp)
+add_executable(heom_cavity_loss_2d_ir.x ir_spectrum/main_cavity_loss_ir_2d.cpp)
 
-#uncomment these to build the executables that calculate the IR spectra
-#add_executable(heom_mol_ir.x ir_spectrum/main_ir.cpp)
-#add_executable(heom_cavity_loss_ir.x ir_spectrum/main_cavity_loss_ir.cpp)
-#add_executable(heom_mol_2d_ir.x ir_spectrum/main_2d_ir.cpp)
-#add_executable(heom_cavity_loss_2d_ir.x ir_spectrum/main_cavity_loss_ir_2d.cpp)
+if(BUILD_THERMALISE)
+add_executable(heom_mol_ir_thermalise.x ir_spectrum/main_ir_therm.cpp)
+add_executable(heom_cavity_loss_ir_thermalise.x ir_spectrum/main_cavity_loss_ir_therm.cpp)
+endif()
+endif()
 
 include(FetchContent)
 #now make sure we have the rapidjson library 
@@ -203,11 +210,7 @@ if(USE_DEFAULT_FIND_BLAS)
     find_package(LAPACK)
 
     if(NOT BLAS_FOUND)
-        message("BLAS NOT FOUND")
         set(BLAS_LIBRARIES "-lblas")
-message("libs ${BLAS_LIBRARIES}")
-    else()
-        message("BLAS FOUND")
     endif()
 
 
@@ -216,9 +219,6 @@ message("libs ${BLAS_LIBRARIES}")
         set(LAPACK_LIBRARIES "-llapack -lm")
     endif()
     set(LINALG_LIBS ${LINALG_LIBS} ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
-
-    message("libs ${BLAS_LIBRARIES}")
-    message("libs ${LAPACK_LIBRARIES}")
 endif()
 
 
@@ -254,45 +254,60 @@ install(TARGETS heom_cavity_loss.x
         DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
 
-#uncomment these to build the executables that use a thermalisation step to prepare the initial state
-#before performing the production HEOM calculations
 
-#target_include_directories(heom_mol_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
-#target_include_directories(heom_mol_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
-#target_link_libraries(heom_mol_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
-#install(TARGETS heom_mol_thermalise.x 
-#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+if(BUILD_THERMALISE)
+target_include_directories(heom_mol_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_mol_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_mol_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_mol_thermalise.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
-#target_include_directories(heom_cavity_loss_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
-#target_include_directories(heom_cavity_loss_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
-#target_link_libraries(heom_cavity_loss_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
-#install(TARGETS heom_cavity_loss_thermalise.x 
-#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+target_include_directories(heom_cavity_loss_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_cavity_loss_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_cavity_loss_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_cavity_loss_thermalise.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+endif()
 
+if(BUILD_IR)
 
-#uncomment these to build the executables that calculate the IR spectra
-#target_include_directories(heom_mol_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
-#target_include_directories(heom_mol_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
-#target_link_libraries(heom_mol_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
-#install(TARGETS heom_mol_ir.x 
-#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+target_include_directories(heom_mol_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_mol_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_mol_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_mol_ir.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
-#target_include_directories(heom_cavity_loss_2d_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
-#target_include_directories(heom_cavity_loss_2d_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
-#target_link_libraries(heom_cavity_loss_2d_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
-#install(TARGETS heom_cavity_loss_2d_ir.x 
-#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+target_include_directories(heom_cavity_loss_2d_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_cavity_loss_2d_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_cavity_loss_2d_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_cavity_loss_2d_ir.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
-#target_include_directories(heom_mol_2d_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
-#target_include_directories(heom_mol_2d_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
-#target_link_libraries(heom_mol_2d_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
-#install(TARGETS heom_mol_2d_ir.x 
-#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+target_include_directories(heom_mol_2d_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_mol_2d_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_mol_2d_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_mol_2d_ir.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
 
-#target_include_directories(heom_cavity_loss_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
-#target_include_directories(heom_cavity_loss_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
-#target_link_libraries(heom_cavity_loss_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
-#install(TARGETS heom_cavity_loss_ir.x 
-#        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+target_include_directories(heom_cavity_loss_ir.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_cavity_loss_ir.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_cavity_loss_ir.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_cavity_loss_ir.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+
+if(BUILD_THERMALISE)
+target_include_directories(heom_mol_ir_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_mol_ir_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_mol_ir_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_mol_ir_thermalise.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+
+target_include_directories(heom_cavity_loss_ir_thermalise.x PRIVATE ${EOS_INCLUDE_DIRECTORIES})
+target_include_directories(heom_cavity_loss_ir_thermalise.x PRIVATE ${LINALG_INCLUDE_DIRECTORIES})
+target_link_libraries(heom_cavity_loss_ir_thermalise.x linalg  ${LINALG_LIBS} ${LIBS}) 
+install(TARGETS heom_cavity_loss_ir_thermalise.x 
+        DESTINATION ${CMAKE_SOURCE_DIR}/bin)
+endif()
+endif()
 
 

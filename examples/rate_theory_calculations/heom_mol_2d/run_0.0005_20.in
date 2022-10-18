@@ -1,0 +1,44 @@
+{
+    "use pade": true,
+    "gammac": 1000,
+    "cavity lifetime": 100,
+    "wc": 200,
+    "wb": 1000,
+    "tmax": 2000,
+    "system": {
+        "nu_c": 1200,
+        "nM": 24,
+        "use_dvr": true,
+        "pot": {
+            "type": "quartic",
+            "wb": 1000,
+            "Eb": 2250
+        },
+        "Rmax": 220,
+        "nF": 100,
+        "nP": 24,
+        "eta": 0.0005,
+        "mass": 1,
+        "Ep": 2500.0,
+        "nR": 1024,
+        "diagpos": true
+    },
+    "use cutoff": true,
+    "L": 15,
+    "beta": 1052.8,
+    "tol": 1e-08,
+    "delta": 1e-14,
+    "K": 3,
+    "Kc": 4,
+    "alpha": 0.1,
+    "nequil": 1000,
+    "dt": 0.5,
+    "maxfactor": [
+        5,
+        5
+    ],
+    "scalefactor": [
+        1,
+        1
+    ]
+}

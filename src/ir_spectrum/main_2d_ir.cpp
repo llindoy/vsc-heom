@@ -14,7 +14,7 @@
 #include <linalg/decompositions/eigensolvers/eigensolver.hpp>
 #include <linalg/decompositions/singular_value_decomposition/singular_value_decomposition.hpp>
 #include "../rkf.hpp"
-#include "../molecular_system_2d.hpp"
+#include "../molecular_system_2D.hpp"
 
 #include "../bath_decomposition.hpp"
 

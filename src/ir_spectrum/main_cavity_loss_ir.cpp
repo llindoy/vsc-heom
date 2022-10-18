@@ -8,8 +8,6 @@
 #include <cstdint>
 #include <algorithm>
 
-#include "heom_operator.hpp"
-
 #include "../heom_operator.hpp"
 
 #include <linalg/decompositions/eigensolvers/eigensolver.hpp>

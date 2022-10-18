@@ -1,0 +1,31 @@
+{
+    "use pade": true, 
+    "wc": 200, 
+    "wb": 1000, 
+    "tmax": 10000, 
+    "system": {
+        "nu_c": 0.0, 
+        "nM": 16, 
+        "use_dvr": true, 
+        "pot": {
+            "type": "quartic", 
+            "wb": 1000, 
+            "Eb": 2250
+        }, 
+        "Rmax": 220, 
+        "nF": 1, 
+        "eta": 0.005, 
+        "mass": 1, 
+        "nP": 8, 
+        "nR": 1024
+    }, 
+    "use cutoff": true, 
+    "L": 25, 
+    "beta": 1052.8, 
+    "tol": 1e-06, 
+    "delta": 1e-14, 
+    "K": 4, 
+    "alpha": 0.1, 
+    "dt": 0.5, 
+    "maxfactor": 8
+}
