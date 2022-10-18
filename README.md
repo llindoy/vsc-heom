@@ -1,6 +1,6 @@
 # vsc-heom
 
-A HEOM code for computing the rate constants of a model molecular system in contact with an optical cavity as described in [Quantum Dynamics of Vibrational Polariton Chemistry]{https://arxiv.org/abs/2210.05550}.  Here a number of different programs that treat different configurations of the system and using different initial conditions for evaluating the rate constant.  Currently the CMake build script is setup to compile the five source files (.cpp into five separate executables) for evaluating using the symmetrized side operator for evaluating the side-side correlation function:
+A HEOM code for computing the rate constants of a model molecular system in contact with an optical cavity as described in [Quantum Dynamics of Vibrational Polariton Chemistry](https://arxiv.org/abs/2210.05550).  Here a number of different programs that treat different configurations of the system and using different initial conditions for evaluating the rate constant.  Currently the CMake build script is setup to compile the five source files (.cpp into five separate executables) for evaluating using the symmetrized side operator for evaluating the side-side correlation function:
 ***
 * rate_theory/main.cpp -> heom_mol.x: A reaction coordinate coupled to an unstructured Debye bath. 
 * rate_theory/main_cavity.cpp heom ->_cavity.x: A reaction coordinate coupled to an unstructured Debye bath and to a perfect (no loss) cavity
@@ -23,7 +23,7 @@ Finally source files are included for evaluating the IR spectrum in a number of 
 Currently the thermalisation code and IR spectrum code will not be compiled, however, by setting the cmake variables BUILD_THERMALISE and BUILD_IR to On these files will be added to the build process.
 
 ## Disclaimer
-This software is provided to support the findings presented in [Quantum Dynamics of Vibrational Polariton Chemistry]{https://arxiv.org/abs/2210.05550} and is very much a research code.  As such, it is currently very much specialised to perform the calculations presented in this work.  While the underlying HEOM method is considerably more general than the application considered here, and even for this application other observables could readily be evaluated, no effort has been made to expose this functionality through the input files.  In principle, this code can be modified to treat arbitrary system bath models coupled to Debye baths, but at the current moment this is not something that will be actively pursued with this code base. 
+This software is provided to support the findings presented in [Quantum Dynamics of Vibrational Polariton Chemistry](https://arxiv.org/abs/2210.05550) and is very much a research code.  As such, it is currently very much specialised to perform the calculations presented in this work.  While the underlying HEOM method is considerably more general than the application considered here, and even for this application other observables could readily be evaluated, no effort has been made to expose this functionality through the input files.  In principle, this code can be modified to treat arbitrary system bath models coupled to Debye baths, but at the current moment this is not something that will be actively pursued with this code base. 
 
 ## Dependencies
 External:
