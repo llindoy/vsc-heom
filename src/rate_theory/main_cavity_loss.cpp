@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <algorithm>
 
-#include "../heom_operator.hpp"
+#include "../heom_operator_sparse.hpp"
 
 #include <linalg/decompositions/eigensolvers/eigensolver.hpp>
 #include <linalg/decompositions/singular_value_decomposition/singular_value_decomposition.hpp>
@@ -270,7 +270,7 @@ int main(int argc, char* argv[])
             debye_bath(Lambda, wc, beta, K, terms[0], false);
             debye_bath(Lambdac, gammac, beta, Kc, terms[1], false);
         }
-        heom_bath_operator<real_type> hop;
+        heom_bath_operator_sparse<real_type> hop;
         hop.add_bath(terms[0]);
         hop.add_bath(terms[1]);
 
@@ -349,15 +349,12 @@ int main(int argc, char* argv[])
         
         //thermalise
         {
-            auto Hop = superoperator::factory::construct(Hsys);
-            std::vector<std::shared_ptr<superoperator::superoperator<complex_type>>> Sops(2);
-            Sops[0] = superoperator::factory::construct(Scoup);
-            Sops[1] = superoperator::factory::construct(Scoupc);
-            
-            linalg::csr_matrix<complex_type> M;
-            hop(Hop, Sops, M);
-            M.prune();
 
+
+            std::vector<linalg::matrix<complex_type>> Sops(2);
+            Sops[0] = Scoup;
+            Sops[1] = Scoupc;
+            hop.set_interactions(Hsys, Sops);
             
             size_type nsteps = static_cast<size_t>(tmax/dt)+1;
             linalg::vector<complex_type> yt(ados.size());
@@ -374,7 +371,7 @@ int main(int argc, char* argv[])
 
             for(size_t i = 0; i < nsteps; ++i)
             {
-                rk(A, [&M](const linalg::vector<complex_type>& ai, linalg::vector<complex_type>& oi){oi = complex_type(0, -1)*M*ai;}, dt);
+                rk(A, [&hop](const linalg::vector<complex_type>& ai, linalg::vector<complex_type>& oi){hop.apply(ai, oi, complex_type(0, -1));}, dt);
 
                 val = linalg::dot_product(linalg::conj(sidev), rhov);
 

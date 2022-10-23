@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <chrono>
 
-#include "../heom_operator.hpp"
+#include "../heom_operator_sparse.hpp"
 
 #include <linalg/decompositions/eigensolvers/eigensolver.hpp>
 #include <linalg/decompositions/singular_value_decomposition/singular_value_decomposition.hpp>
@@ -257,7 +257,7 @@ int main(int argc, char* argv[])
         {
             debye_bath(Lambda, wc, beta, K, term, false);
         }
-        heom_bath_operator<real_type> hop;
+        heom_bath_operator_sparse<real_type> hop;
         hop.add_bath(term);
 
         if(!use_cutoff)
@@ -299,14 +299,7 @@ int main(int argc, char* argv[])
         std::cerr << std::setprecision(16);
         //thermalise
         {
-            auto Hop = superoperator::factory::construct(Hsys);
-            linalg::csr_matrix<complex_type> Scoup_sp;
-            superoperator::dense_to_csr(Scoup, Scoup_sp, 1e-15);
-            auto Sop = superoperator::factory::construct(Scoup_sp);
-
-            linalg::csr_matrix<complex_type> M;
-            hop(Hop, Sop, M);
-            M.prune();
+            hop.set_interactions(Hsys, Scoup);
 
             auto start = std::chrono::high_resolution_clock::now();
             
@@ -320,7 +313,8 @@ int main(int argc, char* argv[])
 
             for(size_t i = 0; i < nsteps; ++i)
             {
-                rk(A, [&M](const linalg::vector<complex_type>& ai, linalg::vector<complex_type>& oi){oi = complex_type(0, -1)*M*ai;}, dt);
+                rk(A, [&hop](const linalg::vector<complex_type>& ai, linalg::vector<complex_type>& oi){hop.apply(ai, oi, complex_type(0, -1));}, dt);
+
 
                 val = linalg::dot_product(linalg::conj(sidev), rhov);
 

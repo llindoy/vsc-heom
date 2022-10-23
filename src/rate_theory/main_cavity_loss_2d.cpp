@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <algorithm>
 
-#include "../heom_operator.hpp"
+#include "../heom_operator_sparse.hpp"
 
 #include <linalg/decompositions/eigensolvers/eigensolver.hpp>
 #include <linalg/decompositions/singular_value_decomposition/singular_value_decomposition.hpp>
@@ -295,14 +295,10 @@ int main(int argc, char* argv[])
             debye_bath(Lambdac, gammac, beta, Kc, terms[1], false);
             debye_bath(Lambdam, gammam, beta, Km, terms[2], false);
         }
-        heom_bath_operator<real_type> hop;
-            std::cerr << "HERE" << std::endl;
+        heom_bath_operator_sparse<real_type> hop;
         hop.add_bath(terms[0]);
-            std::cerr << "HERE" << std::endl;
         hop.add_bath(terms[1]);
-            std::cerr << "HERE" << std::endl;
         hop.add_bath(terms[2]);
-            std::cerr << "HERE" << std::endl;
 
 
         if(!use_cutoff)
@@ -381,20 +377,12 @@ int main(int argc, char* argv[])
         
         //thermalise
         {
-            auto Hop = superoperator::factory::construct(Hsys);
-            std::vector<std::shared_ptr<superoperator::superoperator<complex_type>>> Sops(3);
-            linalg::csr_matrix<complex_type> Scoup_sp, Scoupc_sp, ScoupQ_sp;
-            superoperator::dense_to_csr(Scoup, Scoup_sp, 1e-15);
-            //superoperator::dense_to_csr(Scoupc, Scoupc_sp, 1e-15);
-            //superoperator::dense_to_csr(ScoupQ, ScoupQ_sp, 1e-15);
-            Sops[0] = superoperator::factory::construct(Scoup_sp);
-            Sops[1] = superoperator::factory::construct(Scoupc);
-            Sops[2] = superoperator::factory::construct(ScoupQ);
-            
-            linalg::csr_matrix<complex_type> M;
-            hop(Hop, Sops, M);
-            M.prune();
 
+            std::vector<linalg::matrix<complex_type>> Sops(3);
+            Sops[0] = Scoup;
+            Sops[1] = Scoupc;
+            Sops[2] = ScoupQ;
+            hop.set_interactions(Hsys, Sops);
             
             size_type nsteps = static_cast<size_t>(tmax/dt)+1;
 
@@ -409,7 +397,7 @@ int main(int argc, char* argv[])
 
             for(size_t i = 0; i < nsteps; ++i)
             {
-                rk(A, [&M](const linalg::vector<complex_type>& ai, linalg::vector<complex_type>& oi){oi = complex_type(0, -1)*M*ai;}, dt);
+                rk(A, [&hop](const linalg::vector<complex_type>& ai, linalg::vector<complex_type>& oi){hop.apply(ai, oi, complex_type(0, -1));}, dt);
 
                 val = linalg::dot_product(linalg::conj(sidev), rhov);
 

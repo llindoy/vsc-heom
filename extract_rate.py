@@ -26,7 +26,7 @@ def get_rate(fname, L, skip = 1, color=None):
         kappa = -diff/(d2[1:] + (d2[1:]-1))
         N = d2.shape[0]//5
         kappas = np.convolve(kappa, np.ones(N)/N, mode='valid')
-        print(L, np.abs(k), kappa[-1], kappas[-1])
+        print(L, np.abs(k)/2.0, kappa[-1], kappas[-1])
         if not color is None:
             plt.semilogx(t[1:], kappa, label="K_"+str(L))
             plt.semilogx(t[:-N], kappas, '--', label="aveK_"+str(L))
